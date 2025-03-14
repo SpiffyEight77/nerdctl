@@ -285,6 +285,34 @@ func Create(ctx context.Context, client *containerd.Client, args []string, netMa
 	}
 	opts = append(opts, umaskOpts...)
 
+	if options.HealthCmd != "" {
+		healthLabels := map[string]string{}
+
+		if options.HealthCmd != "" {
+			healthLabels["io.nerdctl.health.cmd"] = options.HealthCmd
+			if options.HealthInterval != "" {
+				healthLabels["io.nerdctl.health.interval"] = options.HealthInterval
+			}
+			if options.HealthTimeout != "" {
+				healthLabels["io.nerdctl.health.timeout"] = options.HealthTimeout
+			}
+			if options.HealthRetries > 0 {
+				healthLabels["io.nerdctl.health.retries"] = fmt.Sprintf("%d", options.HealthRetries)
+			}
+			if options.HealthStartPeriod != "" {
+				healthLabels["io.nerdctl.health.start-period"] = options.HealthStartPeriod
+			}
+		}
+
+		cOpts = append(cOpts, containerd.WithAdditionalContainerLabels(healthLabels))
+
+		healthAnnotations := map[string]string{}
+		for k, v := range healthLabels {
+			healthAnnotations[k] = v
+		}
+		opts = append(opts, oci.WithAnnotations(healthAnnotations))
+	}
+
 	rtCOpts, err := generateRuntimeCOpts(options.GOptions.CgroupManager, options.Runtime)
 	if err != nil {
 		return nil, generateRemoveOrphanedDirsFunc(ctx, id, dataStore, internalLabels), err
