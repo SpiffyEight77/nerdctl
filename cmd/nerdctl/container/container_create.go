@@ -423,6 +423,33 @@ func createOptions(cmd *cobra.Command) (types.ContainerCreateOptions, error) {
 	}
 	// #endregion
 
+	// #region for healthchecks flags
+	opt.HealthCmd, err = cmd.Flags().GetString("health-cmd")
+	if err != nil {
+		return opt, err
+	}
+	opt.HealthInterval, err = cmd.Flags().GetString("health-interval")
+	if err != nil {
+		return opt, err
+	}
+	opt.HealthTimeout, err = cmd.Flags().GetString("health-timeout")
+	if err != nil {
+		return opt, err
+	}
+	opt.HealthRetries, err = cmd.Flags().GetInt("health-retries")
+	if err != nil {
+		return opt, err
+	}
+	opt.HealthTimeout, err = cmd.Flags().GetString("health-timeout")
+	if err != nil {
+		return opt, err
+	}
+	opt.HealthStartPeriod, err = cmd.Flags().GetString("health-start-period")
+	if err != nil {
+		return opt, err
+	}
+	// #endregion
+
 	return opt, nil
 }
 

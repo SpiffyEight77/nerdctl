@@ -286,6 +286,15 @@ func setCreateFlags(cmd *cobra.Command) {
 		return []string{"default"}, cobra.ShellCompDirectiveNoFileComp
 	})
 
+	// #region healthchecks flags
+	cmd.Flags().String("health-cmd", "", "Command to run to check health")
+	cmd.Flags().String("health-interval", "", "Time between running the check")
+	cmd.Flags().Int("health-retries", 0, "Consecutive failures needed to report unhealthy")
+	cmd.Flags().String("health-timeout", "", "Maximum time to allow one check to run")
+	cmd.Flags().String("health-start-period", "", "Start period for the container to initialize before starting health-retries countdown")
+	cmd.Flags().String("health-start-interval", "", "Time between running the check during the start period")
+	// #endregion
+
 }
 
 func processCreateCommandFlagsInRun(cmd *cobra.Command) (types.ContainerCreateOptions, error) {
@@ -327,6 +336,31 @@ func processCreateCommandFlagsInRun(cmd *cobra.Command) (types.ContainerCreateOp
 	}
 	if !validAttachFlag {
 		return opt, fmt.Errorf("invalid stream specified with -a flag. Valid streams are STDIN, STDOUT, and STDERR")
+	}
+
+	opt.HealthCmd, err = cmd.Flags().GetString("health-cmd")
+	if err != nil {
+		return opt, err
+	}
+
+	opt.HealthInterval, err = cmd.Flags().GetString("health-interval")
+	if err != nil {
+		return opt, err
+	}
+
+	opt.HealthTimeout, err = cmd.Flags().GetString("health-timeout")
+	if err != nil {
+		return opt, err
+	}
+
+	opt.HealthRetries, err = cmd.Flags().GetInt("health-retries")
+	if err != nil {
+		return opt, err
+	}
+
+	opt.HealthStartPeriod, err = cmd.Flags().GetString("health-start-period")
+	if err != nil {
+		return opt, err
 	}
 
 	return opt, nil

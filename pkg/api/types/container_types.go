@@ -264,6 +264,19 @@ type ContainerCreateOptions struct {
 
 	// ImagePullOpt specifies image pull options which holds the ImageVerifyOptions for verifying the image.
 	ImagePullOpt ImagePullOptions
+
+	// #region for healthchecks flags
+	// HealthCmd specifies the command to run to check health
+	HealthCmd string
+	// HealthInterval specifies the time between running the health check
+	HealthInterval string
+	// HealthRetries specifies consecutive failures needed to report unhealthy
+	HealthRetries int
+	// HealthTimeout specifies maximum time to allow one check to run
+	HealthTimeout string
+	// HealthStartPeriod specifies start period for the container to initialize before starting health-retries countdown (ms|s|m|h) (default 0s)
+	HealthStartPeriod string
+	// #endregion
 }
 
 // ContainerStopOptions specifies options for `nerdctl (container) stop`.
